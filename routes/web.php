@@ -62,17 +62,19 @@ Route::get('/', function () {
 });
 
 // ============================================
-// SZYBKIE LOGOWANIE DLA TESTÓW (TYLKO ROZWÓJ)
+// SZYBKIE LOGOWANIE DLA TESTÓW (TYLKO DEVELOPMENT)
 // ============================================
-Route::get('/quick-login/{wardId}', function($wardId) {
-    $ward = App\Models\Ward::find($wardId);
-    if (!$ward) {
-        return "Oddział nie istnieje. Dostępne oddziały: " . App\Models\Ward::pluck('name', 'id');
-    }
-    session(['order_ward_id' => $ward->id]);
-    return redirect()->route('order.dashboard')
-        ->with('success', 'Zalogowano jako: ' . $ward->name);
-})->name('quick.login');
+if (app()->environment('local')) {
+    Route::get('/quick-login/{wardId}', function($wardId) {
+        $ward = App\Models\Ward::find($wardId);
+        if (!$ward) {
+            return "Oddział nie istnieje. Dostępne oddziały: " . App\Models\Ward::pluck('name', 'id');
+        }
+        session(['order_ward_id' => $ward->id]);
+        return redirect()->route('order.dashboard')
+            ->with('success', 'Zalogowano jako: ' . $ward->name);
+    })->name('quick.login');
+}
 
 // ============================================
 // TRASY Z LARAVEL BREEZE (logowanie, rejestracja)

@@ -12,6 +12,11 @@ class Ward extends Model
         'name',
         'email',
         'contact_person',
+        'password',
+    ];
+
+    protected $hidden = [
+        'password',
     ];
 
     /**

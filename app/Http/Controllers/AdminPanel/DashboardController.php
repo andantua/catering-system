@@ -12,15 +12,16 @@ class DashboardController extends Controller
 {
     private $deadline = '18:00';
     
-    public function index()
+    public function index(Request $request)
     {
+        $selectedDate = $request->get('date') ? Carbon::parse($request->get('date')) : today();
         $today = today();
         $deadline = Carbon::today()->setTimeFromTimeString($this->deadline);
         $now = Carbon::now();
         
-        // Zamówienia na dziś (zatwierdzone)
+        // Zamówienia na wybraną datę (zatwierdzone)
         $orders = Order::with(['ward', 'diet'])
-            ->whereDate('order_date', $today)
+            ->whereDate('order_date', $selectedDate)
             ->whereNotNull('submitted_at')
             ->get();
         
@@ -65,6 +66,7 @@ class DashboardController extends Controller
             'totalOrders' => $totalOrders,
             'totalWards' => $totalWards,
             'submittedCount' => $submittedCount,
+            'selectedDate' => $selectedDate,
         ]);
     }
     

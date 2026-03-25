@@ -263,7 +263,13 @@ class OrderController extends Controller
             ->whereNotNull('submitted_at')
             ->get();
             
-        Mail::to($ward->email)->send(new OrderConfirmation($ward, $orders, now()));
+        // Wyślij potwierdzenie e-mail (opcjonalnie – nie blokuj zamówienia jeśli mail nie działa)
+        try {
+            Mail::to($ward->email)->send(new OrderConfirmation($ward, $orders, now()));
+        } catch (\Exception $e) {
+            // Log błędu, ale nie przerywaj – zamówienie zostało zapisane
+            \Log::warning('Nie udało się wysłać emaila potwierdzającego dla ' . $ward->name . ': ' . $e->getMessage());
+        }
         
         return redirect()->route('order.dashboard')
             ->with('success', 'Zamówienie na dzień ' . Carbon::parse($orderDate)->format('d.m.Y') . ' zostało złożone!');
