@@ -3,76 +3,58 @@
 @section('title', 'Historia zamówień')
 
 @section('content')
-<div class="container py-4">
+<div class="container py-3">
     <div class="row">
         <div class="col-12">
             
             {{-- Nagłówek --}}
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h1 class="h2 mb-0 fw-bold">
+                    <h4 class="mb-0 fw-bold">
                         <i class="fas fa-history text-primary me-2"></i>Historia zamówień
-                    </h1>
-                    <p class="text-muted mt-1">{{ $ward->name }}</p>
+                    </h4>
+                    <small class="text-muted">{{ $ward->name }}</small>
                 </div>
-                <div>
-                    <a href="{{ route('order.dashboard') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Powrót do dashboardu
-                    </a>
-                </div>
+                <a href="{{ route('order.dashboard') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Powrót
+                </a>
             </div>
             
             {{-- Lista zamówień --}}
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body p-0">
                     @if($orders->count() > 0)
+                        @php $currentDate = null; @endphp
                         @foreach($orders as $order)
-                        <div class="mb-4 pb-3 border-bottom">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div>
-                                    <i class="fas fa-calendar-alt text-primary me-2"></i>
-                                    <strong>{{ \Carbon\Carbon::parse($order->order_date)->format('d.m.Y (l)') }}</strong>
-                                </div>
-                                <span class="badge bg-success">Zatwierdzone</span>
+                            @php
+                                $orderDate = \Carbon\Carbon::parse($order->order_date)->format('d.m.Y');
+                            @endphp
+                            @if($currentDate != $orderDate)
+                                @if($currentDate) </div> @endif
+                                <div class="border-bottom">
+                                    <div class="bg-light px-3 py-2">
+                                        <strong class="small">{{ $orderDate }}</strong>
+                                    </div>
+                                    <div class="px-3">
+                            @endif
+                            <div class="d-flex justify-content-between small py-2 border-bottom">
+                                <span>{{ $order->diet->name }}</span>
+                                <span class="fw-bold">{{ $order->quantity }}</span>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table table-sm">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Dieta</th>
-                                            <th class="text-end">Ilość</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php $dailyTotal = 0; @endphp
-                                        @foreach($orders as $orderItem)
-                                        <tr>
-                                            <td>{{ $orderItem->diet->name }}</td>
-                                            <td class="text-end">{{ $orderItem->quantity }}</td>
-                                        </tr>
-                                        @php $dailyTotal += $orderItem->quantity; @endphp
-                                        @endforeach
-                                        <tr class="table-active">
-                                            <th>RAZEM</th>
-                                            <th class="text-end">{{ $dailyTotal }}</th>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                            @php $currentDate = $orderDate; @endphp
                         @endforeach
+                        </div></div>
                         
                         {{-- Paginacja --}}
-                        <div class="mt-4">
-                            {{ $orders->links() }}
+                        <div class="px-3 py-2 border-top">
+                            {{ $orders->links('pagination::bootstrap-5') }}
                         </div>
                     @else
-                        <div class="text-center py-5">
-                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                            <h5>Brak historii zamówień</h5>
-                            <p class="text-muted">Nie złożono jeszcze żadnego zamówienia.</p>
-                            <a href="{{ route('order.form') }}" class="btn btn-primary mt-2">
-                                <i class="fas fa-clipboard-list me-2"></i>Złóż pierwsze zamówienie
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-inbox fa-2x mb-2 opacity-50"></i>
+                            <p class="small">Brak historii zamówień</p>
+                            <a href="{{ route('order.form') }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-plus-circle me-1"></i>Złóż pierwsze zamówienie
                             </a>
                         </div>
                     @endif

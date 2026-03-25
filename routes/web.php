@@ -48,9 +48,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Wydruk zamówień dla oddziału
         Route::get('/print/ward/{wardId}', [DashboardController::class, 'printWardOrders'])->name('print.ward');
         Route::get('/print/ward/{wardId}/date/{date}', [DashboardController::class, 'printWardOrders'])->name('print.ward.date');
+        
+        // NOWE: Zbiorczy wydruk dla kuchni
+        Route::get('/print/kitchen', [DashboardController::class, 'printKitchen'])->name('print.kitchen');
+        Route::get('/print/kitchen/date/{date}', [DashboardController::class, 'printKitchen'])->name('print.kitchen.date');
     });
 });
-
 // ============================================
 // Strona główna – przekierowanie do logowania oddziału
 // ============================================

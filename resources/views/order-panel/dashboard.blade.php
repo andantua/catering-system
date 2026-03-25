@@ -3,149 +3,96 @@
 @section('title', 'Panel Oddziału')
 
 @section('content')
-<div class="container py-4">
+<div class="container py-3">
     <div class="row">
         <div class="col-12">
             
             {{-- Nagłówek --}}
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h1 class="h2 mb-0 fw-bold">
+                    <h4 class="mb-0 fw-bold">
                         <i class="fas fa-building text-primary me-2"></i>{{ $ward->name }}
-                    </h1>
-                    <p class="text-muted mt-1">Panel zamówień cateringowych</p>
+                    </h4>
+                    <small class="text-muted">Panel zamówień cateringowych</small>
                 </div>
-                <div>
-                    <form action="{{ route('order.logout') }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-secondary">
-                            <i class="fas fa-sign-out-alt me-2"></i>Wyloguj
-                        </button>
-                    </form>
-                </div>
+                <form action="{{ route('order.logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-sign-out-alt me-1"></i>Wyloguj
+                    </button>
+                </form>
             </div>
             
             {{-- Karty statusu --}}
-            <div class="row g-4 mb-4">
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="stat-icon me-3" style="background: rgba(13,110,253,0.1); color: #0d6efd;">
-                                    <i class="fas fa-calendar-day fa-2x"></i>
-                                </div>
-                                <div>
-                                    <p class="text-muted mb-0 small">Dzisiejsze zamówienie</p>
-                                    @if($hasSubmittedToday)
-                                        <h3 class="mb-0 fw-bold text-success">{{ $todayTotal }}</h3>
-                                        <small class="text-success">✔️ Zatwierdzone</small>
-                                    @else
-                                        <h3 class="mb-0 fw-bold text-warning">Brak</h3>
-                                        <small class="text-muted">Nie złożono jeszcze</small>
-                                    @endif
-                                </div>
-                            </div>
+            <div class="row g-2 mb-3">
+                <div class="col-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body py-2">
+                            <small class="text-muted">Dzisiejsze zamówienie</small>
+                            @if($hasSubmittedToday)
+                                <h5 class="mb-0 fw-bold text-success">{{ $todayTotal }}</h5>
+                                <small class="text-success">✔️ Zatwierdzone</small>
+                            @else
+                                <h5 class="mb-0 fw-bold text-warning">Brak</h5>
+                                <small class="text-muted">Nie złożono</small>
+                            @endif
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="stat-icon me-3" style="background: rgba(25,135,84,0.1); color: #198754;">
-                                    <i class="fas fa-chart-line fa-2x"></i>
-                                </div>
-                                <div>
-                                    <p class="text-muted mb-0 small">Łączna liczba posiłków</p>
-                                    <h3 class="mb-0 fw-bold">{{ $stats['total_orders'] }}</h3>
-                                    <small>w {{ $stats['total_days'] }} dniach</small>
-                                </div>
-                            </div>
+                <div class="col-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body py-2">
+                            <small class="text-muted">Łącznie posiłków</small>
+                            <h5 class="mb-0 fw-bold">{{ $stats['total_orders'] }}</h5>
+                            <small>w {{ $stats['total_days'] }} dniach</small>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="stat-icon me-3" style="background: rgba(255,193,7,0.1); color: #ffc107;">
-                                    <i class="fas fa-chart-simple fa-2x"></i>
-                                </div>
-                                <div>
-                                    <p class="text-muted mb-0 small">Średnia dzienna</p>
-                                    <h3 class="mb-0 fw-bold">{{ $stats['avg_per_day'] }}</h3>
-                                    <small>posiłków/dzień</small>
-                                </div>
-                            </div>
+                <div class="col-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body py-2">
+                            <small class="text-muted">Średnia dzienna</small>
+                            <h5 class="mb-0 fw-bold">{{ $stats['avg_per_day'] }}</h5>
+                            <small>posiłków/dzień</small>
                         </div>
                     </div>
                 </div>
             </div>
             
-            {{-- Akcje --}}
-<div class="row g-4 mb-4">
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center py-4">
-                <a href="{{ route('order.form') }}" class="btn btn-primary btn-lg px-5">
-                    <i class="fas fa-plus-circle me-2"></i>Nowe zamówienie
-                </a>
-                <p class="text-muted mt-3 mb-0 small">
-                    <i class="fas fa-calendar-alt me-1"></i>Zamów na dziś lub na kolejne dni
-                </p>
+            {{-- Przyciski akcji --}}
+            <div class="row g-2 mb-3">
+                <div class="col-6">
+                    <a href="{{ route('order.form') }}" class="btn btn-primary w-100 py-2">
+                        <i class="fas fa-plus-circle me-1"></i>Nowe zamówienie
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a href="{{ route('order.history') }}" class="btn btn-outline-info w-100 py-2">
+                        <i class="fas fa-history me-1"></i>Historia
+                    </a>
+                </div>
             </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center py-4">
-                <a href="{{ route('order.history') }}" class="btn btn-outline-info btn-lg px-5">
-                    <i class="fas fa-history me-2"></i>Historia zamówień
-                </a>
-                <p class="text-muted mt-3 mb-0 small">
-                    <i class="fas fa-chart-line me-1"></i>Przeglądaj swoje poprzednie zamówienia
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
             
             {{-- Ostatnie zamówienia --}}
             @if($recentOrders->count() > 0)
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 pt-4 pb-0">
-                    <h5 class="fw-bold mb-0">
-                        <i class="fas fa-clock text-primary me-2"></i>Ostatnie zamówienia
-                    </h5>
+                <div class="card-header bg-white py-2">
+                    <h6 class="mb-0 fw-bold"><i class="fas fa-clock text-primary me-1"></i>Ostatnie zamówienia</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     @foreach($recentOrders as $date => $orders)
-                        <div class="mb-4">
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <i class="fas fa-calendar-alt text-muted"></i>
-                                <strong>{{ \Carbon\Carbon::parse($date)->format('d.m.Y') }}</strong>
-                                <span class="badge bg-primary rounded-pill">{{ $orders->sum('quantity') }} posiłków</span>
+                        <div class="border-bottom">
+                            <div class="bg-light px-3 py-1">
+                                <small class="fw-bold">{{ \Carbon\Carbon::parse($date)->format('d.m.Y') }}</small>
+                                <span class="badge bg-primary float-end">{{ $orders->sum('quantity') }}</span>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table table-sm table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Dieta</th>
-                                            <th class="text-end">Ilość</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($orders as $order)
-                                        <tr>
-                                            <td>{{ $order->diet->name }}</td>
-                                            <td class="text-end">{{ $order->quantity }}</td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                            <div class="px-3 py-1">
+                                @foreach($orders as $order)
+                                <div class="d-flex justify-content-between small py-1">
+                                    <span>{{ $order->diet->name }}</span>
+                                    <span class="fw-bold">{{ $order->quantity }}</span>
+                                </div>
+                                @endforeach
                             </div>
                         </div>
                     @endforeach
@@ -155,32 +102,4 @@
         </div>
     </div>
 </div>
-
-@push('styles')
-<style>
-    .stat-icon {
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 12px;
-    }
-    
-    .btn-primary {
-        background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
-        border: none;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(13,110,253,0.3);
-    }
-    
-    .btn-outline-info:hover {
-        transform: translateY(-2px);
-    }
-</style>
-@endpush
 @endsection

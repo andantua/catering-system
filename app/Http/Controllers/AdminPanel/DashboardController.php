@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Ward;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -65,6 +66,64 @@ class DashboardController extends Controller
             'totalWards' => $totalWards,
             'submittedCount' => $submittedCount,
         ]);
+    }
+    
+    /**
+     * Wydruk zamówień dla wybranego oddziału
+     */
+    public function printWardOrders($wardId, $date = null)
+    {
+        $ward = Ward::findOrFail($wardId);
+        $orderDate = $date ? Carbon::parse($date) : today();
+        
+        $orders = Order::with('diet')
+            ->where('ward_id', $wardId)
+            ->whereDate('order_date', $orderDate)
+            ->whereNotNull('submitted_at')
+            ->get();
+        
+        $total = $orders->sum('quantity');
+        
+        return view('admin-panel.print.ward-orders', compact('ward', 'orders', 'total', 'orderDate'));
+    }
+    
+    /**
+     * Zbiorczy wydruk dla kuchni – wszystkie zamówienia
+     */
+    public function printKitchen($date = null)
+    {
+        $orderDate = $date ? Carbon::parse($date) : today();
+        
+        // Pobierz wszystkie zamówienia na wybraną datę
+        $orders = Order::with(['ward', 'diet'])
+            ->whereDate('order_date', $orderDate)
+            ->whereNotNull('submitted_at')
+            ->get();
+        
+        // Grupowanie według oddziałów i diet
+        $wardsSummary = $orders->groupBy('ward.name')->map(function($wardOrders) {
+            return [
+                'total' => $wardOrders->sum('quantity'),
+                'details' => $wardOrders->groupBy('diet.name')->map->sum('quantity')
+            ];
+        });
+        
+        // Zestawienie zbiorcze według diet (dla kuchni)
+        $summaryByDiet = $orders->groupBy('diet.name')
+            ->map(function($group) {
+                return $group->sum('quantity');
+            })
+            ->sortDesc();
+        
+        $totalAll = $orders->sum('quantity');
+        $wardsCount = $wardsSummary->count();
+        $wardsSubmitted = $orders->pluck('ward_id')->unique()->count();
+        $totalWards = Ward::count();
+        
+        return view('admin-panel.print.kitchen', compact(
+            'orders', 'wardsSummary', 'summaryByDiet', 'totalAll', 
+            'orderDate', 'wardsCount', 'wardsSubmitted', 'totalWards'
+        ));
     }
     
     /**

@@ -1,46 +1,44 @@
 @extends('layouts.app')
 
+@section('title', 'Potwierdzenie zamówienia')
+
 @section('content')
-<div class="container">
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h4>Potwierdzenie zamówienia</h4>
-                </div>
-                <div class="card-body text-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body p-4">
+                    <i class="fas fa-check-circle text-success" style="font-size: 48px;"></i>
+                    <h4 class="mt-3">Zamówienie złożone!</h4>
+                    <p class="small text-muted">Potwierdzenie wysłano na adres:<br>{{ $ward->email }}</p>
                     
-                    <i class="fas fa-check-circle" style="font-size: 64px; color: green;"></i>
+                    <div class="table-responsive mt-3">
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr class="small">
+                                    <th>Dieta</th>
+                                    <th>Ilość</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($orders as $order)
+                                <tr>
+                                    <td class="small">{{ $order->diet->name }}</td>
+                                    <td class="small text-center">{{ $order->quantity }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr class="small fw-bold">
+                                    <td>RAZEM</td>
+                                    <td class="text-center">{{ $orders->sum('quantity') }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                     
-                    <h3 class="mt-3">Zamówienie zostało złożone!</h3>
-                    
-                    <p>Potwierdzenie wysłano na adres: <strong>{{ $ward->email }}</strong></p>
-                    
-                    <table class="table table-bordered mt-4">
-                        <thead>
-                            32
-                                <th>Dieta</th>
-                                <th>Ilość</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($orders as $order)
-                            <tr>
-                                <td>{{ $order->diet->name }}</td>
-                                <td class="text-center">{{ $order->quantity }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                        <tfoot>
-                            <tr class="table-active">
-                                <th>RAZEM</th>
-                                <th class="text-center">{{ $orders->sum('quantity') }}</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-                    
-                    <a href="{{ route('order.login') }}" class="btn btn-primary">
-                        Strona główna
+                    <a href="{{ route('order.dashboard') }}" class="btn btn-primary btn-sm mt-3">
+                        <i class="fas fa-home me-1"></i>Strona główna
                     </a>
                 </div>
             </div>
